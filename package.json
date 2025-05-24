@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-facebookmessenger",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "n8n nodes for Facebook Messenger integration - Send and receive messages through Facebook Messenger",
 	"keywords": [
 		"n8n-community-node-package",
