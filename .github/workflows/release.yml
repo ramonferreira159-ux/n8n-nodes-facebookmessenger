@@ -1,0 +1,89 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on version tags like v1.0.0, v1.2.3, etc.
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for changelog generation
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build package
+        run: npm run build
+      
+      - name: Run tests/lint
+        run: npm run lint
+      
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          # Generate changelog
+          if [ -z "$PREV_TAG" ]; then
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges)
+          else
+            CHANGELOG=$(git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+          fi
+          
+          # Save changelog to output
+          echo "CHANGELOG<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release v${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## Changes in v${{ steps.get_version.outputs.VERSION }}
+            
+            ${{ steps.changelog.outputs.CHANGELOG }}
+            
+            ## Installation
+            
+            Install this community node in n8n:
+            
+            1. Go to **Settings → Community nodes**
+            2. Select **Install**
+            3. Enter `n8n-nodes-facebookmessenger` in **Enter npm package name**
+            4. Select **Install**
+            
+            ## npm Package
+            
+            This release is also available on npm: https://www.npmjs.com/package/n8n-nodes-facebookmessenger
+            
+            ```bash
+            npm install n8n-nodes-facebookmessenger@${{ steps.get_version.outputs.VERSION }}
+            ```
+          draft: false
+          prerelease: false
+      
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
