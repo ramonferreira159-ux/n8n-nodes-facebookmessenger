@@ -1,0 +1,40 @@
+{
+    "nodes": [
+        {
+            "node": "n8n-nodes-base.FacebookMessengerTrigger",
+            "nodeVersion": "1.0",
+            "codexVersion": "1.0",
+            "categories": ["Communication"],
+            "resources": {
+                "credentialDocumentation": [
+                    {
+                        "url": "https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup"
+                    }
+                ],
+                "primaryDocumentation": [
+                    {
+                        "url": "https://developers.facebook.com/docs/messenger-platform"
+                    }
+                ]
+            }
+        },
+        {
+            "node": "n8n-nodes-base.FacebookMessengerSend",
+            "nodeVersion": "1.0",
+            "codexVersion": "1.0",
+            "categories": ["Communication"],
+            "resources": {
+                "credentialDocumentation": [
+                    {
+                        "url": "https://developers.facebook.com/docs/messenger-platform/getting-started/app-setup"
+                    }
+                ],
+                "primaryDocumentation": [
+                    {
+                        "url": "https://developers.facebook.com/docs/messenger-platform/send-messages"
+                    }
+                ]
+            }
+        }
+    ]
+}
