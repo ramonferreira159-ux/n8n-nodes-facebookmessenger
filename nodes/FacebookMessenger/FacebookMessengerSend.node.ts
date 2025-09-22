@@ -11,7 +11,7 @@ export class FacebookMessengerSend implements INodeType {
         description: 'Send messages via Facebook Messenger (inclui Generic Button Template: card com imagem/titulo/subtitulo + botoes obrigatorios e selecao de message tag)',
         defaults: { name: 'Facebook Messenger Send' },
         inputs: ['main'],
-        outputs: ['main'],
+        outputs: [{ name: 'main' }],
         credentials: [
             { name: 'facebookMessengerApi', required: true }
         ],
@@ -381,7 +381,7 @@ export class FacebookMessengerSend implements INodeType {
                 }
 
                 body = clean(body);
-                console.log('[n8n-facebook-messenger] Payload:', JSON.stringify(body, null, 2));
+                // console.log('[n8n-facebook-messenger] Payload:', JSON.stringify(body, null, 2));
 
                 const options = {
                     method: 'POST',
